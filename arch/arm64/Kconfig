@@ -2116,6 +2116,8 @@ config ARM64_BTI_KERNEL
 	depends on !CC_IS_GCC || GCC_VERSION >= 100100
 	# https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106671
 	depends on !CC_IS_GCC
+	# https://github.com/llvm/llvm-project/issues/215547
+	depends on !CC_IS_CLANG || CLANG_VERSION < 210000
 	depends on (!FUNCTION_GRAPH_TRACER || DYNAMIC_FTRACE_WITH_ARGS)
 	help
 	  Build the kernel with Branch Target Identification annotations
@@ -2429,6 +2431,22 @@ config ARM64_ACPI_PARKING_PROTOCOL
 	  the kernel will not allow booting through the ARM64 ACPI parking
 	  protocol even if the corresponding data is present in the ACPI
 	  MADT table.
+
+config BUILTIN_DTB
+	bool "Built-in device tree"
+	depends on OF
+	select GENERIC_BUILTIN_DTB
+	help
+	  Link a selected device tree into the kernel and use it instead of
+	  the tree supplied by the bootloader. The resulting image is specific
+	  to that hardware. This is useful when the bootloader cannot pass
+	  a suitable device tree. If unsure, say N.
+
+config BUILTIN_DTB_NAME
+	string "Built-in device tree source"
+	depends on BUILTIN_DTB
+	help
+	  DTS path without suffix, relative to arch/arm64/boot/dts.
 
 config CMDLINE
 	string "Default kernel command string"
